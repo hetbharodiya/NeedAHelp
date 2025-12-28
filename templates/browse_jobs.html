@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="mb-6 p-4 rounded-lg bg-green-100 text-green-800">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
+<h2 class="text-3xl font-extrabold mb-2">Available Helper Jobs</h2>
+<p class="text-gray-600 mb-6">
+    Jobs posted by nearby businesses in South Ahmedabad.
+</p>
+
+<!-- Filters -->
+<form method="GET" class="mb-6 flex gap-4">
+
+    <!-- Area Filter -->
+    <select name="area" onchange="this.form.submit()" class="p-3 border rounded-lg">
+        <option value="">All Areas</option>
+        {% for area in areas %}
+            <option value="{{ area.area_name }}"
+                {% if area.area_name == selected_area %}selected{% endif %}>
+                {{ area.area_name }}
+            </option>
+        {% endfor %}
+    </select>
+
+    <!-- Job Type Filter -->
+    <select name="job_type" onchange="this.form.submit()" class="p-3 border rounded-lg">
+        <option value="">All Job Types</option>
+        {% for type in job_types %}
+            <option value="{{ type.type_name }}"
+                {% if type.type_name == selected_job_type %}selected{% endif %}>
+                {{ type.type_name }}
+            </option>
+        {% endfor %}
+    </select>
+
+</form>
+
+<!-- Job List -->
+<div class="space-y-4">
+
+    {% for job in jobs %}
+    <a href="{% url 'job_detail' job.id %}?role=helper" class="block">
+        <div class="bg-white p-5 rounded-2xl shadow-sm hover:shadow-md transition active:scale-[0.98]">
+
+            <!-- Top Row -->
+            <div class="flex items-start justify-between">
+                <h3 class="text-lg font-semibold leading-tight">
+                    {{ job.title }}
+                </h3>
+                <span class="text-sm font-bold text-green-700">
+                    ₹{{ job.pay }}
+                </span>
+            </div>
+
+            <!-- Job Type -->
+            <span class="inline-block mt-2 px-3 py-1 text-xs rounded-full bg-gray-100 text-gray-700">
+                {{ job.job_type.type_name }}
+            </span>
+
+            <!-- Area + Duration -->
+            <p class="text-sm text-gray-500 mt-2">
+                {{ job.area.area_name }} • {{ job.duration }}
+            </p>
+
+            <!-- CTA hint -->
+            <p class="text-xs text-gray-400 mt-3">
+                Tap to view details →
+            </p>
+
+        </div>
+    </a>
+    {% endfor %}
+
+</div>
+
+{% endblock %}

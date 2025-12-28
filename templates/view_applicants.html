@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="max-w-4xl mx-auto bg-white p-6 rounded-xl shadow">
+
+    <!-- Title -->
+    <div class="mb-6">
+        <h2 class="text-2xl font-bold">
+            Applicants for: {{ job.title }}
+        </h2>
+
+        {% if job.status == "closed" %}
+            <span class="inline-block mt-2 px-3 py-1 text-sm rounded-full bg-red-100 text-red-700">
+                Job Closed
+            </span>
+        {% endif %}
+    </div>
+
+    <!-- Applicants -->
+    {% for application in applications %}
+        <div class="border rounded-lg p-4 mb-4 flex justify-between items-center">
+
+            <!-- Applicant Info -->
+            <div>
+                <p class="font-semibold text-lg">{{ application.name }}</p>
+                <p class="text-gray-600 text-sm">📞 {{ application.phone }}</p>
+
+                <!-- Status Badge -->
+                {% if application.status == "pending" %}
+                    <span class="inline-block mt-2 px-3 py-1 text-xs rounded-full bg-yellow-100 text-yellow-700">
+                        Pending
+                    </span>
+                {% elif application.status == "hired" %}
+                    <span class="inline-block mt-2 px-3 py-1 text-xs rounded-full bg-green-100 text-green-700">
+                        Hired
+                    </span>
+                {% else %}
+                    <span class="inline-block mt-2 px-3 py-1 text-xs rounded-full bg-gray-200 text-gray-700">
+                        Rejected
+                    </span>
+                {% endif %}
+            </div>
+
+            <!-- Hire Button -->
+            <div>
+                {% if job.status == "open" and application.status == "pending" %}
+                    <form method="post" action="{% url 'hire_applicant' application.id %}">
+                        {% csrf_token %}
+                        <button type="submit"
+                                class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+                            Hire
+                        </button>
+                    </form>
+                {% elif application.status == "hired" %}
+                    <span class="text-green-600 font-semibold">
+                        ✔ Selected
+                    </span>
+                {% endif %}
+            </div>
+
+        </div>
+    {% empty %}
+        <p class="text-gray-500">No applicants yet.</p>
+    {% endfor %}
+
+    <!-- Back Link -->
+    <a href="{% url 'job_detail' job.id %}"
+       class="inline-block mt-6 text-blue-600 hover:underline">
+        ← Back to Job
+    </a>
+
+</div>
+
+{% endblock %}

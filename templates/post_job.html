@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="max-w-3xl mx-auto bg-white p-6 rounded-xl shadow">
+
+    <h2 class="text-2xl font-bold mb-6">Post a Job</h2>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <!-- Job Title -->
+        <div class="mb-4">
+            <label class="block font-medium mb-1">Job Title</label>
+            <input
+                type="text"
+                name="title"
+                class="w-full p-3 border rounded-lg"
+                required
+            >
+        </div>
+
+        <!-- Job Type -->
+        <div class="mb-4">
+            <label class="block font-medium mb-1">Job Type</label>
+            <select name="job_type" class="w-full p-3 border rounded-lg" required>
+                {% for type in job_types %}
+                    <option value="{{ type.id }}">{{ type.type_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Area -->
+        <div class="mb-4">
+            <label class="block font-medium mb-1">Area</label>
+            <select name="area" class="w-full p-3 border rounded-lg" required>
+                {% for area in areas %}
+                    <option value="{{ area.id }}">{{ area.area_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Duration -->
+        <div class="mb-4">
+            <label class="block font-medium mb-1">Duration</label>
+            <input
+                type="text"
+                name="duration"
+                class="w-full p-3 border rounded-lg"
+                placeholder="e.g. 1 day / 4 hours"
+                required
+            >
+        </div>
+
+        <!-- Pay -->
+        <div class="mb-4">
+            <label class="block font-medium mb-1">Pay</label>
+            <input
+                type="text"
+                name="pay"
+                class="w-full p-3 border rounded-lg"
+                placeholder="e.g. ₹500"
+                required
+            >
+        </div>
+
+        <!-- Job Description -->
+        <div class="mb-6">
+            <label class="block font-medium mb-1">Job Description</label>
+            <textarea
+                name="job_details"
+                rows="4"
+                class="w-full p-3 border rounded-lg"
+                placeholder="Describe what work needs to be done"
+            ></textarea>
+        </div>
+
+        <!-- Submit -->
+        <button
+            type="submit"
+            class="bg-black text-white px-6 py-2 rounded hover:bg-gray-800"
+        >
+            Post Job
+        </button>
+
+    </form>
+
+</div>
+
+{% endblock %}

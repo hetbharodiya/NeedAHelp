@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="max-w-3xl mx-auto bg-white p-6 rounded-xl shadow">
+
+    <!-- Job Title -->
+    <h1 class="text-3xl font-bold mb-2">
+        {{ job.title }}
+    </h1>
+
+    <!-- Job Meta -->
+    <p class="text-gray-600 mb-4">
+        {{ job.area.area_name }} • {{ job.job_type.type_name }} • {{ job.duration }}
+    </p>
+
+    <!-- Pay -->
+    <p class="text-xl font-semibold mb-6">
+        Pay: {{ job.pay }}
+    </p>
+
+    <!-- Job Description -->
+    <h3 class="text-lg font-semibold mb-2">Job Description</h3>
+
+    <div class="p-4 bg-gray-50 rounded-lg text-gray-700">
+        {{ job.job_details|default:"Further instructions will be shared after applying." }}
+    </div>
+
+    <!-- Apply Button (UI only for now) -->
+  <form method="post" action="{% url 'apply_job' job.id %}">
+    {% csrf_token %}
+
+    <input
+        type="text"
+        name="name"
+        placeholder="Enter your name"
+        required
+        style="
+            width:100%;
+            padding:10px;
+            margin-bottom:10px;
+            border-radius:6px;
+            border:1px solid #ccc;
+        "
+    >
+
+    <input
+        type="tel"
+        name="phone"
+        placeholder="Enter your mobile number"
+        pattern="[0-9]{10}"
+        required
+        style="
+            width:100%;
+            padding:10px;
+            margin-bottom:12px;
+            border-radius:6px;
+            border:1px solid #ccc;
+        "
+    >
+
+    <button
+        type="submit"
+        style="
+            background:#2563eb;
+            color:white;
+            padding:10px 18px;
+            border:none;
+            border-radius:6px;
+            font-weight:600;
+            cursor:pointer;
+        "
+    >
+        Apply for this Job
+    </button>
+</form>
+
+<a href="{% url 'view_applicants' job.id %}" style="display:block; margin-top:10px; color:#2563eb;">
+    View Applicants
+</a>
+
+
+
+</div>
+
+{% endblock %}
