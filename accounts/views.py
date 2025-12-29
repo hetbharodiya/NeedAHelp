@@ -10,6 +10,8 @@ def register(request):
         email = request.POST.get("email")
         password1 = request.POST.get("password1")
         password2 = request.POST.get("password2")
+        role = request.POST.get("role")
+        print("🔥 REGISTER VIEW HIT | ROLE =", role)
 
         if password1 != password2:
             messages.error(request, "Passwords do not match")
@@ -24,6 +26,10 @@ def register(request):
             email=email,
             password=password1
         )
+
+        user.profile.role = role
+        user.profile.save()
+
         login(request, user)
         return redirect("home")
 
@@ -39,10 +45,14 @@ def login_view(request):
 
         if user:
             login(request, user)
-            return redirect("home")
-        else:
-            messages.error(request, "Invalid credentials")
-            return redirect("login")
+
+            if user.profile.role == "job_poster":
+                return redirect("my_jobs")
+            else:
+                return redirect("browse_jobs")
+
+        messages.error(request, "Invalid credentials")
+        return redirect("login")
 
     return render(request, "accounts/login.html")
 

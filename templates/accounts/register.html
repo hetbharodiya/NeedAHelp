@@ -1,17 +1,74 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div style="max-width:400px;margin:auto;">
-    <h2>Register</h2>
+<div class="max-w-md mx-auto bg-white p-6 rounded-xl shadow">
+    <h2 class="text-2xl font-bold mb-4 text-center">Create Account</h2>
 
-    <form method="post">
+    <form method="post" action="{% url 'register' %}" class="space-y-4">
         {% csrf_token %}
-        <input type="text" name="username" placeholder="Username" required><br><br>
-        <input type="email" name="email" placeholder="Email" required><br><br>
-        <input type="password" name="password1" placeholder="Password" required><br><br>
-        <input type="password" name="password2" placeholder="Confirm Password" required><br><br>
 
-        <button type="submit">Register</button>
+        <div>
+            <input
+                type="text"
+                name="username"
+                placeholder="Username"
+                required
+                class="w-full border px-3 py-2 rounded"
+            >
+        </div>
+
+        <div>
+            <input
+                type="email"
+                name="email"
+                placeholder="Email"
+                required
+                class="w-full border px-3 py-2 rounded"
+            >
+        </div>
+
+        <div>
+            <input
+                type="password"
+                name="password1"
+                placeholder="Password"
+                required
+                class="w-full border px-3 py-2 rounded"
+            >
+        </div>
+
+        <div>
+            <input
+                type="password"
+                name="password2"
+                placeholder="Confirm Password"
+                required
+                class="w-full border px-3 py-2 rounded"
+            >
+        </div>
+
+        <!-- 🔑 ROLE SELECTION -->
+        <div>
+            <p class="font-semibold mb-2">I want to:</p>
+
+            <label class="flex items-center mb-2">
+                <input type="radio" name="role" value="job_poster" required>
+                <span class="ml-2">Post Jobs</span>
+            </label>
+
+            <label class="flex items-center">
+                <input type="radio" name="role" value="job_seeker">
+                <span class="ml-2">Find Work</span>
+            </label>
+        </div>
+
+        <!-- ✅ SUBMIT BUTTON -->
+        <button
+            type="submit"
+            class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+        >
+            Register
+        </button>
     </form>
 </div>
 {% endblock %}

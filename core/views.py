@@ -4,6 +4,8 @@ from django.http import Http404
 from .models import Job, Area, JobType, JobApplication
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseForbidden
+
 
 
 
@@ -12,6 +14,12 @@ from django.contrib.auth.decorators import login_required
 # HOME
 # =========================
 def home(request):
+    if request.user.is_authenticated:
+        if request.user.profile.role == "job_poster":
+            return redirect("my_jobs")
+        else:
+            return redirect("browse_jobs")
+
     return render(request, "home.html")
 
 
@@ -52,6 +60,9 @@ from .models import Job, JobType, Area
 
 @login_required
 def post_job(request):
+    if request.user.profile.role != "job_poster":
+        return HttpResponseForbidden("You are not allowed to post jobs")
+
     job_types = JobType.objects.all()
     areas = Area.objects.all()
 
@@ -62,7 +73,6 @@ def post_job(request):
         duration = request.POST.get("duration")
         pay = request.POST.get("pay")
         job_details = request.POST.get("job_details")
-        
 
         Job.objects.create(
             title=title,
@@ -71,22 +81,17 @@ def post_job(request):
             duration=duration,
             pay=pay,
             job_details=job_details,
+            owner=request.user,   # IMPORTANT
             status="open",
-            owner=request.user ,
         )
 
         messages.success(request, "Job posted successfully!")
-        return redirect("browse_jobs")
+        return redirect("my_jobs")
 
-    return render(
-        request,
-        "post_job.html",
-        {
-            "job_types": job_types,
-            "areas": areas,
-        }
-    )
-
+    return render(request, "post_job.html", {
+        "job_types": job_types,
+        "areas": areas,
+    })
 
 
 # =========================
@@ -115,24 +120,21 @@ def job_detail(request, job_id):
 # =========================
 @login_required
 def apply_job(request, job_id):
+    if request.user.profile.role != "job_seeker":
+        return HttpResponseForbidden("You are not allowed to apply")
+
     job = get_object_or_404(Job, id=job_id)
 
     if request.method == "POST":
-        name = request.POST.get("name")
-        phone = request.POST.get("phone")
-
         JobApplication.objects.create(
             job=job,
-            name=name,
-            phone=phone,
+            name=request.user.username,
+            phone=request.POST.get("phone"),
             status="pending"
         )
 
-        messages.success(request, "You have successfully applied for this job!")
-        return redirect("job_detail", job_id=job.id)
-
-    return redirect("job_detail", job_id=job.id)
-
+        messages.success(request, "Application submitted!")
+        return redirect("browse_jobs")
 
 
 # =========================
@@ -142,9 +144,8 @@ def apply_job(request, job_id):
 def view_applicants(request, job_id):
     job = get_object_or_404(Job, id=job_id)
 
-    # 🔒 OWNER CHECK
-    if job.owner != request.user:
-        raise Http404("You are not allowed to view applicants")
+    if request.user != job.owner:
+        raise Http404("Not allowed")
 
     applications = job.applications.all()
 
@@ -181,3 +182,21 @@ def hire_applicant(request, application_id):
 
     messages.success(request, "Applicant hired successfully.")
     return redirect("view_applicants", job_id=job.id)
+
+@login_required
+def my_jobs(request):
+    if request.user.profile.role != "job_poster":
+        return HttpResponseForbidden("Access denied")
+
+    jobs = Job.objects.filter(owner=request.user)
+    return render(request, "my_jobs.html", {"jobs": jobs})
+
+@login_required
+def my_applications(request):
+    applications = JobApplication.objects.filter(
+        name=request.user.username
+    ).select_related("job").order_by("-applied_at")
+
+    return render(request, "my_applications.html", {
+        "applications": applications
+    })

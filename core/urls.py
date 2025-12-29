@@ -11,6 +11,10 @@ urlpatterns = [
     path("jobs/<int:job_id>/applicants/", views.view_applicants, name="view_applicants"),
     path("applications/<int:application_id>/hire/", views.hire_applicant, name="hire_applicant"),
     path("admin/", admin.site.urls),
+    path("my-jobs/", views.my_jobs, name="my_jobs"),
+    path("my-applications/", views.my_applications, name="my_applications"),
+
+
     
 
 

@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 class="text-2xl font-bold mb-4">My Applications</h2>
+
+{% if applications %}
+    <div class="space-y-4">
+        {% for app in applications %}
+            <div class="bg-white p-4 rounded-lg shadow">
+                <h3 class="font-semibold">{{ app.job.title }}</h3>
+                <p class="text-sm text-gray-500">
+                    {{ app.job.area.area_name }} • {{ app.job.job_type.type_name }}
+                </p>
+
+                {% if app.status == "applied" %}
+                    <span class="inline-block mt-2 px-3 py-1 text-xs bg-yellow-100 text-yellow-700 rounded-full">
+                        Applied
+                    </span>
+                {% elif app.status == "hired" %}
+                    <span class="inline-block mt-2 px-3 py-1 text-xs bg-green-100 text-green-700 rounded-full">
+                        Hired
+                    </span>
+                {% else %}
+                    <span class="inline-block mt-2 px-3 py-1 text-xs bg-red-100 text-red-700 rounded-full">
+                        Rejected
+                    </span>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <p class="text-gray-500">You haven’t applied to any jobs yet.</p>
+{% endif %}
+{% endblock %}

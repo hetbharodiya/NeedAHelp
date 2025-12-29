@@ -6,64 +6,44 @@
     <title>NeedAHelp</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 text-gray-900">
+
+<body class="m-0 overflow-x-hidden">
 
 <!-- Header -->
-<header class="bg-white shadow-sm">
-    <div class="max-w-screen-md mx-auto px-4 py-3 flex items-center justify-between">
+<header class="bg-white shadow-sm h-20">
+    <div class="w-full px-8 py-4 flex items-center justify-between">
         <a href="/" class="text-xl font-extrabold">
             NeedAHelp
         </a>
 
-        <nav class="flex items-center gap-4 text-sm">
-
-            <!-- Common links -->
-            <a href="/jobs/" class="text-gray-700 hover:text-black">Find Jobs</a>
-            <a href="/post-job/" class="text-gray-700 hover:text-black">Post Job</a>
-
-            <!-- Auth links -->
+        <nav class="flex gap-6 text-sm">
             {% if user.is_authenticated %}
-                <span class="text-gray-600">
-                    Hi, <strong>{{ user.username }}</strong>
-                </span>
-                <a href="{% url 'logout' %}"
-                   class="text-red-600 hover:text-red-700 font-medium">
-                    Logout
-                </a>
-            {% else %}
-                <a href="{% url 'login' %}"
-                   class="text-blue-600 hover:text-blue-700 font-medium">
-                    Login
-                </a>
-                <a href="{% url 'register' %}"
-                   class="text-blue-600 hover:text-blue-700 font-medium">
-                    Register
-                </a>
-            {% endif %}
 
+                {% if user.profile.role == "job_poster" %}
+                    <a href="{% url 'post_job' %}">Post Job</a>
+                    <a href="{% url 'my_jobs' %}">My Jobs</a>
+                {% endif %}
+
+                {% if user.profile.role == "job_seeker" %}
+                    <a href="{% url 'browse_jobs' %}">Find Jobs</a>
+                    <a href="{% url 'my_applications' %}">My Applications</a>
+                {% endif %}
+
+                <span class="font-semibold">Hi, {{ user.username }}</span>
+                <a href="{% url 'logout' %}" class="text-red-600">Logout</a>
+
+            {% else %}
+                <a href="{% url 'login' %}">Login</a>
+                <a href="{% url 'register' %}">Register</a>
+            {% endif %}
         </nav>
     </div>
 </header>
 
-<!-- Page container -->
-<main class="max-w-screen-md mx-auto px-4 py-4">
-
-    <!-- Messages -->
-    {% if messages %}
-        <div class="space-y-3 mb-4">
-            {% for message in messages %}
-                <div class="p-4 rounded-lg bg-green-100 text-green-800 text-sm">
-                    {{ message }}
-                </div>
-            {% endfor %}
-        </div>
-    {% endif %}
-
-    <!-- Page Content -->
-    {% block content %}
-    {% endblock %}
-
+<!-- Page Content (EDGE TO EDGE) -->
+<main class="w-full m-0 p-0">
+    {% block content %}{% endblock %}
 </main>
 
-<!-- Footer -->
-<
+</body>
+</html>

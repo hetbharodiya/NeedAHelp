@@ -1,45 +1,62 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="max-w-6xl mx-auto mt-20 grid md:grid-cols-2 gap-12 items-center">
+<section class="w-screen h-[calc(100vh-80px)] bg-gray-50 overflow-hidden">
 
-    <!-- Left Content -->
-    <div>
-        <h1 class="text-5xl font-extrabold leading-tight mb-6">
-            Need a Helper,<br>
-            <span class="text-black">Right Now?</span>
-        </h1>
 
-        <p class="text-gray-600 text-lg mb-8">
-            NeedAHelp connects businesses in <strong>South Ahmedabad</strong>
-            with nearby helpers for a few hours or a day — fast, simple, reliable.
-        </p>
+    <div class="grid grid-cols-1 md:grid-cols-2 h-full px-6 md:px-12 py-16 gap-16">
 
-        <div class="flex space-x-4">
-            <a href="{% url 'post_job' %}"
-               class="bg-black text-white px-8 py-3 rounded-lg text-lg hover:bg-gray-800 transition">
-                Post a Job
-            </a>
 
-            <a href="{% url 'browse_jobs' %}"
-               class="border border-black px-8 py-3 rounded-lg text-lg hover:bg-black hover:text-white transition">
-                Find Work
-            </a>
+        <!-- LEFT SIDE -->
+        <div class="flex flex-col justify-center">
+            <h1 class="text-6xl font-extrabold leading-tight mb-8">
+                Need a Helper,<br>
+                <span class="text-black">Right Now?</span>
+            </h1>
+
+            <p class="text-gray-600 text-xl mb-10 max-w-xl">
+                NeedAHelp connects businesses in
+                <strong>South Ahmedabad</strong>
+                with nearby helpers for a few hours or a day —
+                fast, simple, reliable.
+            </p>
+
+            {% if not user.is_authenticated %}
+            <div class="flex gap-5">
+                <a href="{% url 'register' %}"
+                   class="bg-black text-white px-8 py-4 rounded-lg font-semibold hover:bg-gray-800 transition">
+                    Get Started
+                </a>
+
+                <a href="{% url 'login' %}"
+                   class="border border-black px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition">
+                    Login
+                </a>
+            </div>
+            {% endif %}
         </div>
-    </div>
 
-    <!-- Right Visual -->
-    <div class="block mt-6 md:mt-0">
-        <div class="bg-white p-10 rounded-xl shadow-lg">
-            <h3 class="text-xl font-bold mb-4">How it works</h3>
-            <ul class="space-y-3 text-gray-600">
-                <li>✔ Post a helper job in minutes</li>
-                <li>✔ Nearby helpers apply instantly</li>
-                <li>✔ Get work done without hiring full-time</li>
-            </ul>
+        <!-- RIGHT SIDE -->
+        <div class="flex items-center justify-end">
+            <div class="bg-white p-12 shadow-xl w-full max-w-xl">
+                <h3 class="font-bold text-2xl mb-6">How it works</h3>
+                <ul class="space-y-4 text-gray-700 text-lg">
+                    <li class="flex items-center gap-3">
+                        <span class="text-purple-600 text-xl">✔</span>
+                        Post a helper job in minutes
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <span class="text-purple-600 text-xl">✔</span>
+                        Nearby helpers apply instantly
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <span class="text-purple-600 text-xl">✔</span>
+                        Get work done without hiring full-time
+                    </li>
+                </ul>
+            </div>
         </div>
+
     </div>
-
-</div>
-
+</section>
 {% endblock %}

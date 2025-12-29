@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 class="text-2xl font-bold mb-4">My Posted Jobs</h2>
+
+{% if jobs %}
+    <div class="space-y-4">
+        {% for job in jobs %}
+            <div class="bg-white p-4 rounded-lg shadow flex justify-between items-center">
+                <div>
+                    <h3 class="font-semibold text-lg">{{ job.title }}</h3>
+                    <p class="text-sm text-gray-500">{{ job.area.area_name }} • {{ job.job_type.type_name }}</p>
+
+                    {% if job.status == "open" %}
+                        <span class="inline-block mt-2 px-3 py-1 text-xs bg-green-100 text-green-700 rounded-full">
+                            Open
+                        </span>
+                    {% else %}
+                        <span class="inline-block mt-2 px-3 py-1 text-xs bg-gray-200 text-gray-700 rounded-full">
+                            Closed
+                        </span>
+                    {% endif %}
+                </div>
+
+                <div>
+                    <a href="{% url 'view_applicants' job.id %}"
+                       class="text-blue-600 hover:underline text-sm">
+                        View Applicants
+                    </a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <p class="text-gray-500">You haven’t posted any jobs yet.</p>
+{% endif %}
+{% endblock %}
