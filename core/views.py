@@ -189,7 +189,25 @@ def my_jobs(request):
         return HttpResponseForbidden("Access denied")
 
     jobs = Job.objects.filter(owner=request.user)
-    return render(request, "my_jobs.html", {"jobs": jobs})
+
+    total_jobs = jobs.count()
+    open_jobs = jobs.filter(status="open").count()
+    closed_jobs = jobs.filter(status="closed").count()
+
+    total_applicants = JobApplication.objects.filter(
+        job__owner=request.user
+    ).count()
+
+    context = {
+        "jobs": jobs,
+        "total_jobs": total_jobs,
+        "open_jobs": open_jobs,
+        "closed_jobs": closed_jobs,
+        "total_applicants": total_applicants,
+    }
+
+    return render(request, "dashboard/poster_dashboard.html", context)
+
 
 @login_required
 def my_applications(request):
@@ -197,6 +215,17 @@ def my_applications(request):
         name=request.user.username
     ).select_related("job").order_by("-applied_at")
 
-    return render(request, "my_applications.html", {
-        "applications": applications
-    })
+    total_applied = applications.count()
+    hired = applications.filter(status="hired").count()
+    pending = applications.filter(status="pending").count()
+    rejected = applications.filter(status="rejected").count()
+
+    context = {
+        "applications": applications,
+        "total_applied": total_applied,
+        "hired": hired,
+        "pending": pending,
+        "rejected": rejected,
+    }
+
+    return render(request, "dashboard/finder_dashboard.html", context)

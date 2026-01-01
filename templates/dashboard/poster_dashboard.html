@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container mt-4">
+  <h2>Job Poster Dashboard</h2>
+
+  <div class="row my-3">
+    <div class="col-md-3">
+      <div class="card p-3 text-center">
+        <h6>Total Jobs</h6>
+        <h3>{{ total_jobs }}</h3>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card p-3 text-center">
+        <h6>Open Jobs</h6>
+        <h3>{{ open_jobs }}</h3>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card p-3 text-center">
+        <h6>Closed Jobs</h6>
+        <h3>{{ closed_jobs }}</h3>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card p-3 text-center">
+        <h6>Total Applicants</h6>
+        <h3>{{ total_applicants }}</h3>
+      </div>
+    </div>
+  </div>
+
+  <h4 class="mt-4">My Jobs</h4>
+
+  {% for job in jobs %}
+    <div class="card my-2 p-3">
+      <h5>{{ job.title }}</h5>
+      <p>
+        {{ job.area }} | {{ job.job_type }} |
+        <strong>{{ job.status|title }}</strong>
+      </p>
+
+      <a href="{% url 'view_applicants' job.id %}" class="btn btn-primary btn-sm">
+        View Applicants
+      </a>
+    </div>
+  {% empty %}
+    <p>No jobs posted yet.</p>
+  {% endfor %}
+</div>
+
+{% endblock %}

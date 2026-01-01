@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Job, JobApplication, JobType, Area
+from .models import Job, JobApplication, JobType, Area,KYCProfile
 
 
 @admin.register(Job)
@@ -24,3 +24,9 @@ class JobTypeAdmin(admin.ModelAdmin):
 @admin.register(Area)
 class AreaAdmin(admin.ModelAdmin):
     list_display = ("area_name",)
+
+@admin.register(KYCProfile)
+class KYCProfileAdmin(admin.ModelAdmin):
+    list_display = ("user", "document_type", "status", "submitted_at")
+    list_filter = ("status", "document_type")
+    search_fields = ("user__username",)

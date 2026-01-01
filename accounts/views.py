@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from .models import Profile
-
+from core.models import KYCProfile
 
 # =====================
 # REGISTER
@@ -30,50 +30,52 @@ def register(request):
             password=password1
         )
 
-        # ✅ Ensure profile exists
+        # Profile
         profile, created = Profile.objects.get_or_create(user=user)
         profile.role = role
         profile.save()
 
-        login(request, user)
-        return redirect("home")
+        # 🔑 CREATE KYC PROFILE (IMPORTANT)
+        KYCProfile.objects.create(
+            user=user,
+            status="pending"
+        )
+
+        messages.success(request, "Account created. Please wait for KYC approval.")
+        return redirect("login")
 
     return render(request, "accounts/register.html")
-
 
 # =====================
 # LOGIN
 # =====================
 def login_view(request):
     if request.method == "POST":
-        print("POST DATA:", request.POST)
         username = request.POST.get("username")
         password = request.POST.get("password")
-        print("USERNAME:", username)
-        print("PASSWORD:", password)
 
         user = authenticate(request, username=username, password=password)
-        print("AUTH USER:", user)
 
-        if user is not None:
-            login(request, user)
+        if user is None:
+            messages.error(request, "Invalid username or password")
+            return redirect("login")
 
-            # ✅ Safe profile access
-            profile, created = Profile.objects.get_or_create(
-                user=user,
-                defaults={"role": "job_seeker"}
-            )
+        # 🔐 KYC CHECK
+        try:
+            kyc = KYCProfile.objects.get(user=user)
+        except KYCProfile.DoesNotExist:
+            messages.error(request, "KYC not submitted. Please complete verification.")
+            return redirect("login")
 
-            if profile.role == "job_poster":
-                return redirect("my_jobs")
-            else:
-                return redirect("browse_jobs")
+        if kyc.status != "verified":
+            messages.error(request, "Your account is under verification.")
+            return redirect("login")
 
-        messages.error(request, "Invalid username or password")
-        return redirect("login")
+        # ✅ LOGIN ONLY IF VERIFIED
+        login(request, user)
+        return redirect("home")
 
     return render(request, "accounts/login.html")
-
 
 # =====================
 # LOGOUT
