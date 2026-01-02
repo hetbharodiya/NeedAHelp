@@ -56,24 +56,11 @@ def login_view(request):
 
         user = authenticate(request, username=username, password=password)
 
-        if user is None:
+        if user is not None:
+            login(request, user)  # 🔥 THIS IS REQUIRED
+            return redirect("home")  # change later to role-based
+        else:
             messages.error(request, "Invalid username or password")
-            return redirect("login")
-
-        # 🔐 KYC CHECK
-        try:
-            kyc = KYCProfile.objects.get(user=user)
-        except KYCProfile.DoesNotExist:
-            messages.error(request, "KYC not submitted. Please complete verification.")
-            return redirect("login")
-
-        if kyc.status != "verified":
-            messages.error(request, "Your account is under verification.")
-            return redirect("login")
-
-        # ✅ LOGIN ONLY IF VERIFIED
-        login(request, user)
-        return redirect("home")
 
     return render(request, "accounts/login.html")
 

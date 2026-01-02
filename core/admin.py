@@ -27,6 +27,5 @@ class AreaAdmin(admin.ModelAdmin):
 
 @admin.register(KYCProfile)
 class KYCProfileAdmin(admin.ModelAdmin):
-    list_display = ("user", "document_type", "status", "submitted_at")
-    list_filter = ("status", "document_type")
-    search_fields = ("user__username",)
+    list_display = ("user", "is_verified", "created_at")
+    list_filter = ("is_verified",)

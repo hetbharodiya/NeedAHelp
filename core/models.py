@@ -69,30 +69,8 @@ class JobApplication(models.Model):
     
 class KYCProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    
-    document_type = models.CharField(
-        max_length=50,
-        choices=[
-            ("aadhaar", "Aadhaar Card"),
-            ("voter", "Voter ID"),
-            ("driving", "Driving License"),
-        ]
-    )
-
-    document_file = models.FileField(upload_to="kyc_documents/")
-    
-    status = models.CharField(
-        max_length=20,
-        choices=[
-            ("pending", "Pending"),
-            ("verified", "Verified"),
-            ("rejected", "Rejected"),
-        ],
-        default="pending"
-    )
-
-    submitted_at = models.DateTimeField(auto_now_add=True)
-    verified_at = models.DateTimeField(null=True, blank=True)
+    is_verified = models.BooleanField(default=True)  # auto-verified
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.user.username} - {self.status}"
+        return self.user.username
